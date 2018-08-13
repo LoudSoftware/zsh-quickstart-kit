@@ -27,7 +27,7 @@ setopt correct
 unsetopt correctall
 
 # Base PATH
-PATH=/usr/local/bin:/usr/local/sbin:/sbin:/usr/sbin:/bin:/usr/bin
+PATH=/usr/local/bin:/usr/local/sbin:/sbin:/usr/sbin:/bin:/usr/bin:$PATH
 
 # Conditional PATH additions
 for path_candidate in /opt/local/sbin \
@@ -51,27 +51,6 @@ done
 
 export LSCOLORS='Exfxcxdxbxegedabagacad'
 export LS_COLORS='di=1;34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
-
-# Fun with SSH
-if [ $(ssh-add -l | grep -c "The agent has no identities." ) -eq 1 ]; then
-  if [[ "$(uname -s)" == "Darwin" ]]; then
-    # We're on OS X. Try to load ssh keys using pass phrases stored in
-    # the OSX keychain.
-    #
-    # You can use ssh-add -K /path/to/key to store pass phrases into
-    # the OSX keychain
-    ssh-add -k
-  fi
-fi
-
-for key_candidate in rsa dsa ecdsa
-do
-  if [ -f ~/.ssh/id_${key_candidate} -a $(ssh-add -l | grep -c ".ssh/id_${key_candidate}" ) -eq 0 ]; then
-    ssh-add ~/.ssh/id_${key_candidate}
-  fi
-done
-
-# Now that we have $PATH set up and ssh keys loaded, configure zgen.
 
 # start zgen
 if [ -f ~/.zgen-setup ]; then
@@ -203,10 +182,6 @@ if [ -d ~/.zsh-completions ]; then
   done
 fi
 
-echo
-echo "Current SSH Keys:"
-ssh-add -l
-echo
 
 # Honor old .zshrc.local customizations, but print deprecation warning.
 if [ -f ~/.zshrc.local ]; then
@@ -231,20 +206,20 @@ fi
 #
 # This snippet is from Mislav Marohnić <mislav.marohnic@gmail.com>'s
 # dotfiles repo at https://github.com/mislav/dotfiles
-dedupe_path() {
-  typeset -a paths result
-  paths=($path)
-
-  while [[ ${#paths} -gt 0 ]]; do
-    p="${paths[1]}"
-    shift paths
-    [[ -z ${paths[(r)$p]} ]] && result+="$p"
-  done
-
-  export PATH=${(j+:+)result}
-}
-
-dedupe_path
+#dedupe_path() {
+#  typeset -a paths result
+#  paths=($path)
+#
+#  while [[ ${#paths} -gt 0 ]]; do
+#    p="${paths[1]}"
+#    shift paths
+#    [[ -z ${paths[(r)$p]} ]] && result+="$p"
+#  done
+#
+#  export PATH=${(j+:+)result}
+#}
+#
+# dedupe_path
 
 # If desk is installed, load the Hook for desk activation
 [[ -n "$DESK_ENV" ]] && source "$DESK_ENV"
@@ -308,3 +283,5 @@ if [[ ! -z "$QUICKSTART_KIT_REFRESH_IN_DAYS" ]]; then
 fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).
