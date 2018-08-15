@@ -129,7 +129,8 @@ load-starter-plugin-list() {
 
   # Bullet train prompt setup
   # zgen load caiogondim/bullet-train-oh-my-zsh-theme bullet-train
-  zgen load agnoster/agnoster-zsh-theme agnoster
+  # zgen load agnoster/agnoster-zsh-theme agnoster
+  zgen load bhilburn/powerlevel9k powerlevel9k
 
   # Save it all to init script
   zgen save
