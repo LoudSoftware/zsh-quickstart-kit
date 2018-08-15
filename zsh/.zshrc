@@ -206,20 +206,20 @@ fi
 #
 # This snippet is from Mislav Marohnić <mislav.marohnic@gmail.com>'s
 # dotfiles repo at https://github.com/mislav/dotfiles
-#dedupe_path() {
-#  typeset -a paths result
-#  paths=($path)
-#
-#  while [[ ${#paths} -gt 0 ]]; do
-#    p="${paths[1]}"
-#    shift paths
-#    [[ -z ${paths[(r)$p]} ]] && result+="$p"
-#  done
-#
-#  export PATH=${(j+:+)result}
-#}
-#
-# dedupe_path
+dedupe_path() {
+  typeset -a paths result
+  paths=($path)
+
+  while [[ ${#paths} -gt 0 ]]; do
+    p="${paths[1]}"
+    shift paths
+    [[ -z ${paths[(r)$p]} ]] && result+="$p"
+  done
+
+  export PATH=${(j+:+)result}
+}
+
+dedupe_path
 
 # If desk is installed, load the Hook for desk activation
 [[ -n "$DESK_ENV" ]] && source "$DESK_ENV"
